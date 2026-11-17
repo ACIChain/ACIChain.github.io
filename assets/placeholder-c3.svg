@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#0d1117"/>
+<circle cx="640" cy="300" r="70" fill="none" stroke="#5eead4" stroke-width="4"/>
+<polygon points="615,265 615,335 675,300" fill="#5eead4"/>
+<text x="640" y="450" text-anchor="middle" fill="#8b97a8" font-family="sans-serif" font-size="36">Demo video - C3 placeholder</text>
+</svg>
