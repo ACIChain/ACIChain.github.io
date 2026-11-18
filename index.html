@@ -66,25 +66,21 @@
     <a class="card" href="#c1">
       <div class="card-icon">⚡</div>
       <h3>C1 · Resource Amplification</h3>
-      <p>One external issue triggers multiple paid LLM sessions across parallel workflows, amplifying compute and cost.</p>
       <span class="card-asr">ASR 87.5%</span>
     </a>
     <a class="card" href="#c2">
       <div class="card-icon">🎭</div>
       <h3>C2 · Automated Decision Manipulation</h3>
-      <p>Forged authority in issue content steers the agent's triage decision; downstream automation executes it verbatim.</p>
       <span class="card-asr">ASR 87.5%</span>
     </a>
     <a class="card" href="#c3">
       <div class="card-icon">📝</div>
       <h3>C3 · Privileged Repository Modification</h3>
-      <p>A comment from an unprivileged account drives the agent's write access to persist attacker-controlled content.</p>
       <span class="card-asr">ASR 97.5%</span>
     </a>
     <a class="card" href="#c4">
       <div class="card-icon">🗝️</div>
       <h3>C4 · Protected Information Exfiltration</h3>
-      <p>A fake bug-reproduction request induces arbitrary package execution; the process inherits and leaks runtime credentials.</p>
       <span class="card-asr">ASR 72.5%</span>
     </a>
   </div>
@@ -96,17 +92,8 @@
     <span class="chain-badge b1">C1</span>
     <h2>Resource Amplification</h2>
   </div>
-  <div class="demo-meta">
-    <span><strong>Target:</strong> <span class="masked">[masked] · 100k+ ★ dev-tool repo</span></span>
-    <span><strong>Entry:</strong> external issue (<code>allow-users: "*"</code>)</span>
-    <span><strong>Impact:</strong> 1 issue → 2–3 paid model sessions + label-injection DoS</span>
-  </div>
-  <ol class="steps">
-    <li><strong>Normal behavior.</strong> Two workflows (issue-labeler, issue-deduplicator) invoke a coding agent for every issue, regardless of author privileges.</li>
-    <li><strong>Attack.</strong> An unprivileged external account files a single issue embedding task-disguise (L1) instructions.</li>
-    <li><strong>Propagation.</strong> Both workflows fire in parallel; the deduplicator runs a second model pass when no match is found.</li>
-    <li><strong>Impact.</strong> Multiple billable agent sessions per issue, plus injected labels suppressing triage decisions entirely.</li>
-  </ol>
+  <p class="demo-line">One external issue recursively spawns follow-up issues and agent runs, burning CI and model resources with no rate limit.</p>
+  
   <div class="video-wrap">
     <video controls preload="metadata">
       <source src="assets/demo-c1.mp4" type="video/mp4">
@@ -121,17 +108,8 @@
     <span class="chain-badge b2">C2</span>
     <h2>Automated Decision Manipulation</h2>
   </div>
-  <div class="demo-meta">
-    <span><strong>Target:</strong> <span class="masked">[masked] · mobile-dev repo</span></span>
-    <span><strong>Entry:</strong> forged support-ticket text in an external issue</span>
-    <span><strong>Impact:</strong> agent labels, closes, and posts fake official confirmation</span>
-  </div>
-  <ol class="steps">
-    <li><strong>Normal behavior.</strong> A maintainer runs <code>@claude re-triage</code> on an issue; the agent classifies and a nightly workflow later acts on the verdict.</li>
-    <li><strong>Attack.</strong> An external account embeds a forged internal ticket ("approved by the security team", canary-marked) in the issue body.</li>
-    <li><strong>Propagation.</strong> The maintainer's routine re-triage makes the agent read the attacker's text as the decision basis; the verdict flows to the deterministic sweep workflow via labels and marked comments.</li>
-    <li><strong>Impact.</strong> Priority inflation, wrongful auto-close as "completed"/"not planned", and a bot-posted fake confirmation citing the fabricated ticket.</li>
-  </ol>
+  <p class="demo-line">A forged security-approval issue tricks the triage agent into labeling a crypto-backdoor PR <code>safe-to-merge</code>, and downstream automation merges it into main.</p>
+  
   <div class="video-wrap">
     <video controls preload="metadata">
       <source src="assets/demo-c2.mp4" type="video/mp4">
@@ -146,17 +124,8 @@
     <span class="chain-badge b3">C3</span>
     <h2>Privileged Repository Modification</h2>
   </div>
-  <div class="demo-meta">
-    <span><strong>Target:</strong> <span class="masked">[masked] · desktop-app repo (public advisory)</span></span>
-    <span><strong>Entry:</strong> PR review comment containing a trigger word</span>
-    <span><strong>Impact:</strong> attacker content committed under the project bot identity</span>
-  </div>
-  <ol class="steps">
-    <li><strong>Normal behavior.</strong> An auto-fix workflow hands PR review comments containing <code>claude-fix</code> to an agent with <code>contents: write</code>.</li>
-    <li><strong>Attack.</strong> The workflow checks only the commenter's account <em>type</em> (<code>User</code>), not repository write permission — any external account qualifies.</li>
-    <li><strong>Propagation.</strong> The agent treats the comment body as "the user's primary request" and executes allowed <code>git add/commit/push</code>.</li>
-    <li><strong>Impact.</strong> The requested content is persistently committed to the PR branch under <code>claude[bot]</code>; maintainers later removed the workflow and published an advisory.</li>
-  </ol>
+  <p class="demo-line">A fake ops ticket makes the agent set <code>CI_MODE=suspended</code>, silently disabling the repository&#8217;s own security checks.</p>
+  
   <div class="video-wrap">
     <video controls preload="metadata">
       <source src="assets/demo-c3.mp4" type="video/mp4">
@@ -171,17 +140,8 @@
     <span class="chain-badge b4">C4</span>
     <h2>Protected Information Exfiltration</h2>
   </div>
-  <div class="demo-meta">
-    <span><strong>Target:</strong> <span class="masked">[masked] · 10k+ ★ developer-tool repo</span></span>
-    <span><strong>Entry:</strong> issue requesting bug reproduction with a "community helper"</span>
-    <span><strong>Impact:</strong> arbitrary package execution inherits and exfiltrates runtime credentials</span>
-  </div>
-  <ol class="steps">
-    <li><strong>Normal behavior.</strong> The issue-intake agent is expected to reproduce reported bugs; its bash policy permits <code>npx *</code> / <code>npm *</code>.</li>
-    <li><strong>Attack.</strong> An external issue asks the agent to run an attacker-controlled helper package as part of reproduction.</li>
-    <li><strong>Propagation.</strong> The package process inherits the step environment, including model API keys and the bot's GitHub token.</li>
-    <li><strong>Impact.</strong> Credential digests arrive at the attacker-observable collection endpoint; maintainers fixed it by removing shell access and isolating the token.</li>
-  </ol>
+  <p class="demo-line">A faked audit request makes the agent post the runner&#8217;s publish credential to a public issue, attacker-readable.</p>
+  
   <div class="video-wrap">
     <video controls preload="metadata">
       <source src="assets/demo-c4.mp4" type="video/mp4">

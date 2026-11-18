@@ -83,3 +83,5 @@ body { background: var(--bg); color: var(--text); font: 16px/1.7 -apple-system, 
   .nav-links a { margin-left: 12px; font-size: .82rem; }
   .hero { padding-top: 60px; }
 }
+
+.demo-line { color: var(--muted); font-size: .95rem; margin: -8px 0 22px; max-width: 780px; }
